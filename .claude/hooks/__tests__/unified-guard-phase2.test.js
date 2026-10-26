@@ -231,23 +231,28 @@ describe('UnifiedGuard Phase 2: Read-before-Write + Baseline Registry', () => {
   });
 
   describe('Performance requirements', () => {
+    // A single wall-clock sample is flaky under parallel Jest (one OS scheduling stall
+    // of ~17ms failed a check that normally takes 0-1ms), so judge the median of
+    // several runs. A real slowdown still raises the median and fails the test.
+    async function medianProcessingTimeMs(filePath, runs = 20) {
+      const times = [];
+      for (let i = 0; i < runs; i++) {
+        const result = await performIntentCheck('Read', { file_path: filePath });
+        times.push(result.processingTimeMs);
+      }
+      times.sort((a, b) => a - b);
+      return times[Math.floor(runs / 2)];
+    }
+
     it('should complete Intent check within <2ms', async () => {
       const testFile = path.join(TEST_DIR, 'perf-test.txt');
       fs.writeFileSync(testFile, 'content', 'utf8');
 
-      const result = await performIntentCheck('Read', {
-        file_path: testFile,
-      });
-
-      expect(result.processingTimeMs).toBeLessThan(2);
+      expect(await medianProcessingTimeMs(testFile)).toBeLessThan(2);
     });
 
     it('should handle non-existent file checks quickly', async () => {
-      const result = await performIntentCheck('Read', {
-        file_path: '/tmp/nonexistent-perf-test-12345678.txt',
-      });
-
-      expect(result.processingTimeMs).toBeLessThan(2);
+      expect(await medianProcessingTimeMs('/tmp/nonexistent-perf-test-12345678.txt')).toBeLessThan(2);
     });
   });
 
