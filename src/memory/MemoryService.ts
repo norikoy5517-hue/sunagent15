@@ -22,6 +22,7 @@ import {
   TaskCategory,
   TaskRecord,
 } from './types';
+import { renameSyncWithRetry } from '../utils/fs-retry';
 
 /**
  * Slug regex for agent names. Matches the same pattern enforced by
@@ -1129,7 +1130,7 @@ export class MemoryService {
       fs.fsyncSync(fd);
       fs.closeSync(fd);
       fd = null;
-      fs.renameSync(tmpPath, targetPath);
+      renameSyncWithRetry(tmpPath, targetPath);
     } catch (err) {
       if (fd !== null) {
         try {
