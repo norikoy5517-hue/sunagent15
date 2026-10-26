@@ -125,9 +125,13 @@ module.exports = {
     // These are JS files outside src/tests roots, connected to CI as a separate step
     {
       displayName: 'hooks',
-      testMatch: ['<rootDir>/.claude/hooks/__tests__/**/*.test.js'],
+      // No <rootDir> here: on Windows it expands with '\' separators, and '\.claude'
+      // is then read as an escaped '.' (glob) / '\n' etc. (regex), so the project
+      // matched 0 tests and the ignore pattern matched almost every file.
+      testMatch: ['**/.claude/hooks/__tests__/**/*.test.js'],
       testPathIgnorePatterns: [
-        '<rootDir>/.claude/hooks/__tests__/unified-guard-phase3.test.js',
+        // Custom Phase3 TestSuite runner (calls process.exit) — run it directly with node
+        '/\\.claude/hooks/__tests__/unified-guard-phase3\\.test\\.js$',
       ],
       modulePathIgnorePatterns: [
         '<rootDir>/\\.claude/skills/.*/\\.venv/',

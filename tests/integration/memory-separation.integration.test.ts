@@ -583,10 +583,9 @@ describe('MemoryService — Template/Runtime Separation (PLAN.md Step 2-3 / Step
         spawnWorker([dirs.basePath, dirs.runtimeBasePath, agent, 'record', '3', 'pB']),
       ]);
 
-      expect(r1.code).toBe(0);
-      expect(r2.code).toBe(0);
-      expect(r1.stderr).toBe('');
-      expect(r2.stderr).toBe('');
+      // Compare code + stderr together so a failing worker's error message shows in the diff
+      expect({ code: r1.code, stderr: r1.stderr }).toEqual({ code: 0, stderr: '' });
+      expect({ code: r2.code, stderr: r2.stderr }).toEqual({ code: 0, stderr: '' });
 
       const runtimeYaml = yaml.parse(
         fs.readFileSync(path.join(dirs.runtimeBasePath, 'agents', `${agent}-stats.yaml`), 'utf-8')
@@ -718,8 +717,9 @@ describe('MemoryService — Template/Runtime Separation (PLAN.md Step 2-3 / Step
         spawnWorker([dirs.basePath, dirs.runtimeBasePath, agent, 'cleanup', '0']),
       ]);
 
-      expect(rRecord.code).toBe(0);
-      expect(rClean.code).toBe(0);
+      // Include stderr so a failing worker's error message shows in the diff
+      expect({ code: rRecord.code, stderr: rRecord.stderr }).toEqual({ code: 0, stderr: expect.any(String) });
+      expect({ code: rClean.code, stderr: rClean.stderr }).toEqual({ code: 0, stderr: expect.any(String) });
 
       const runtimeYaml = yaml.parse(
         fs.readFileSync(path.join(dirs.runtimeBasePath, 'agents', `${agent}-stats.yaml`), 'utf-8')

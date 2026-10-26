@@ -44,7 +44,8 @@ function isLintTarget(filePath) {
   if (TARGET_PATTERNS.some((pattern) => pattern.test(fileName))) return true;
   return (
     fileName.endsWith('.json') &&
-    path.dirname(filePath).split(path.sep).includes('workflows')
+    // Split on both separators: hook inputs on Windows may use '/' or '\'
+    path.dirname(filePath).split(/[\\/]/).includes('workflows')
   );
 }
 

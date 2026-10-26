@@ -174,10 +174,15 @@ jobs:
         run: npx jest --coverage --ci --runInBand
         timeout-minutes: 10
 
+      # --selectProjects (not --testMatch): a CLI --testMatch is applied to every project,
+      # which ran each hook test 6x in parallel and crashed on shared temp dirs.
+      # unified-guard-phase3 is a custom TestSuite runner (calls process.exit), so it is
+      # excluded from the Jest project and run directly with node.
       - name: Run hook tests
-        run: npx jest --testMatch='**/.claude/hooks/__tests__/**/*.test.js' --ci
+        run: |
+          npx jest --selectProjects hooks --ci
+          node .claude/hooks/__tests__/unified-guard-phase3.test.js
         timeout-minutes: 5
-        continue-on-error: true
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4

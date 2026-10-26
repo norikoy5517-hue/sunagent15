@@ -444,6 +444,9 @@ describe('FeedbackLoop', () => {
 
     expect(loop.pendingCount).toBe(1);
     expect(loop.totalFeedbackCount).toBe(1);
+
+    // Clear the pending 30s flush timer so Jest can exit without --forceExit
+    history.destroy();
   });
 
   test('15. 50件フィードバック後に再学習がトリガーされる', () => {

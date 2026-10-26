@@ -52,6 +52,30 @@ export function loadState(): WorkflowState | null {
   }
 }
 
+const RENAME_RETRY_CODES = new Set(['EPERM', 'EACCES', 'EBUSY']);
+const RENAME_MAX_ATTEMPTS = 10;
+
+/**
+ * renameSync with retry for transient Windows errors.
+ * On Windows, antivirus / search indexer briefly holding the new file makes rename fail
+ * with EPERM/EACCES/EBUSY (the same case graceful-fs retries). Other platforms: no retry.
+ */
+function renameWithRetry(from: string, to: string): void {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      fs.renameSync(from, to);
+      return;
+    } catch (error) {
+      const code = (error as NodeJS.ErrnoException).code ?? '';
+      if (process.platform !== 'win32' || !RENAME_RETRY_CODES.has(code) || attempt >= RENAME_MAX_ATTEMPTS) {
+        throw error;
+      }
+      // Synchronous backoff (10ms, 20ms, ... up to ~450ms total)
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, attempt * 10);
+    }
+  }
+}
+
 /**
  * Save workflow state to .workflow_state.json (atomic write)
  */
@@ -70,7 +94,7 @@ export function saveState(state: WorkflowState): void {
     fs.writeFileSync(tmpPath, content, 'utf-8');
 
     // Rename (atomic on POSIX, near-atomic on Windows)
-    fs.renameSync(tmpPath, filePath);
+    renameWithRetry(tmpPath, filePath);
   } catch (error) {
     // Cleanup temp file on error
     try {
