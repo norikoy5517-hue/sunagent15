@@ -59,7 +59,7 @@ services:
   # Ops Schedule Runner (P18)
   # Daily/weekly automated reports and digest
   ops-scheduler:
-    image: node:20-alpine
+    image: node:24-alpine
     container_name: taisun-ops-scheduler
     restart: unless-stopped
     working_dir: /app
