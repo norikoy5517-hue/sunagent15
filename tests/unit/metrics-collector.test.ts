@@ -118,4 +118,9 @@ describe('metrics-collector', () => {
       expect(status.bufferSize >= 0).toBe(true);
     });
   });
+
+  afterAll(async () => {
+    // Drain the buffer so the pending 15-minute flush timer is cleared and Jest can exit
+    await metricsCollector.flushBuffer();
+  });
 });

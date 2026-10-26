@@ -3,7 +3,9 @@
  */
 
 import * as fs from 'fs';
-import { loadState, saveState, clearState } from '../../src/proxy-mcp/workflow/store';
+import * as os from 'os';
+import * as path from 'path';
+import { loadState, saveState, clearState, setStateDir, resetStateDir } from '../../src/proxy-mcp/workflow/store';
 import { loadAllWorkflows, getWorkflow } from '../../src/proxy-mcp/workflow/registry';
 import {
   startWorkflow,
@@ -13,8 +15,21 @@ import {
 } from '../../src/proxy-mcp/workflow/engine';
 import type { WorkflowState } from '../../src/proxy-mcp/workflow/types';
 
+// Isolate workflow state in a temp dir: the repo-root .workflow_state.json is shared
+// with parallel Jest workers (e.g. skillize strict-mode checks) and real sessions.
+const TEMP_STATE_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'taisun-test-workflow-engine-'));
+
+beforeAll(() => {
+  setStateDir(TEMP_STATE_DIR);
+});
+
+afterAll(() => {
+  resetStateDir();
+  fs.rmSync(TEMP_STATE_DIR, { recursive: true, force: true });
+});
+
 describe('Workflow Store', () => {
-  const TEST_STATE_FILE = '.workflow_state.json';
+  const TEST_STATE_FILE = path.join(TEMP_STATE_DIR, '.workflow_state.json');
 
   beforeEach(() => {
     // Cleanup

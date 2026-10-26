@@ -140,6 +140,11 @@ describe('metrics integration', () => {
     });
   });
 
+  afterAll(async () => {
+    // Drain the buffer so the pending 15-minute flush timer is cleared and Jest can exit
+    await metricsCollector.flushBuffer();
+  });
+
   afterEach(() => {
     // Clean up test files
     const metricsFile = path.join(HOOKS_DATA_DIR, 'metrics-daily', `metrics-${TEST_DATE}.json`);

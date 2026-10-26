@@ -83,9 +83,9 @@ class LRUCache<T> {
   constructor(config: CacheConfig) {
     this.config = config;
 
-    // Start cleanup interval
+    // Start cleanup interval (unref: background housekeeping must not keep the process alive)
     if (config.enabled && config.cleanupIntervalMs > 0) {
-      setInterval(() => this.cleanup(), config.cleanupIntervalMs);
+      setInterval(() => this.cleanup(), config.cleanupIntervalMs).unref();
     }
   }
 

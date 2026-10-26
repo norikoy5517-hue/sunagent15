@@ -127,23 +127,24 @@ function calculateDelay(baseMs: number, attempt: number, jitter: boolean): numbe
 }
 
 /**
- * Create a timeout promise
- */
-function createTimeout<T>(ms: number, message: string): Promise<T> {
-  return new Promise((_, reject) => {
-    setTimeout(() => reject(new Error(message)), ms);
-  });
-}
-
-/**
- * Execute a function with timeout
+ * Execute a function with timeout.
+ * The timer is cleared as soon as fn settles so it does not linger for the
+ * full timeout (which kept processes alive and piled up timers per call).
  */
 export async function withTimeout<T>(
   fn: () => Promise<T>,
   timeoutMs: number,
   label: string = 'operation'
 ): Promise<T> {
-  return Promise.race([fn(), createTimeout<T>(timeoutMs, `${label} timed out after ${timeoutMs}ms`)]);
+  let timer: NodeJS.Timeout | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`${label} timed out after ${timeoutMs}ms`)), timeoutMs);
+  });
+  try {
+    return await Promise.race([fn(), timeout]);
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 /**
