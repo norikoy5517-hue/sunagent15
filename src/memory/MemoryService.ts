@@ -271,7 +271,7 @@ export class MemoryService {
       return null;
     }
 
-    let rawStats: Record<string, unknown> | null = null;
+    let rawStats: Record<string, unknown>;
     try {
       const content = fs.readFileSync(statsPath, 'utf-8');
       const parsed = yaml.parse(content);

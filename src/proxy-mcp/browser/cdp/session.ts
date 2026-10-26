@@ -84,7 +84,8 @@ export async function connectCDP(
       attempts++;
       if (attempts >= fullConfig.maxRetries) {
         throw new Error(
-          `Failed to connect to Chrome after ${fullConfig.maxRetries} attempts: ${err}`
+          `Failed to connect to Chrome after ${fullConfig.maxRetries} attempts: ${err}`,
+          { cause: err }
         );
       }
       // Wait before retry

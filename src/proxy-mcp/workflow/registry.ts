@@ -72,7 +72,8 @@ export function loadAllWorkflows(): Map<string, WorkflowDefinition> {
       }
       throw new Error(
         `Failed to load workflow definition ${file}: ${err.message}\n` +
-          `ワークフロー定義の読み込みに失敗: ${file}`
+          `ワークフロー定義の読み込みに失敗: ${file}`,
+        { cause: error }
       );
     }
   }

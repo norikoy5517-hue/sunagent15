@@ -182,3 +182,6 @@ scripts/originals/backups/pre-compact-*.json
 # Python bytecode caches
 __pycache__/
 *.py[cod]
+
+# TypeDoc generated API docs (npm run docs:generate)
+docs/api/

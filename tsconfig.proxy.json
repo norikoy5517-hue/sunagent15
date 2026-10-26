@@ -4,7 +4,7 @@
     "outDir": "dist",
     "rootDir": "src",
     "declaration": true,
-    "moduleResolution": "node"
+    "moduleResolution": "bundler"
   },
   "include": ["src/proxy-mcp/**/*", "src/i18n/**/*"],
   "exclude": ["node_modules", "dist"]

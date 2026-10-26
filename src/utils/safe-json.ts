@@ -88,7 +88,7 @@ export function safeJSONParseStrict<T = unknown>(
     return sanitizeObject<T>(parsed);
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
-    throw new Error(`[Security] JSON parse failed in ${context}: ${message}`);
+    throw new Error(`[Security] JSON parse failed in ${context}: ${message}`, { cause: error });
   }
 }
 

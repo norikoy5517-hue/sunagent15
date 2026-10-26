@@ -273,7 +273,7 @@ export function evaluateRound(
   const maxReached = roundNumber >= maxRounds;
 
   let shouldContinue = false;
-  let reason = '';
+  let reason: string;
 
   if (converged) {
     reason = `✅ 収束 (スコア: ${(compositeScore * 100).toFixed(0)}% ≥ ${(convergenceThreshold * 100).toFixed(0)}%)`;

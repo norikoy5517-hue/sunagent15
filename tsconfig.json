@@ -2,14 +2,15 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "commonjs",
-    "lib": ["ES2020", "DOM"],
+    "lib": ["ES2022", "DOM"],
     "jsx": "react-jsx",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "resolveJsonModule": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "types": ["node", "jest"]
   },
   "include": ["src/**/*", "tests/**/*", "scripts/**/*"],
   "exclude": ["node_modules", "dist", "packages", "src/app", "src/components"]

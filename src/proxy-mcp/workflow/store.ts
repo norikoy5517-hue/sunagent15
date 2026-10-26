@@ -48,7 +48,7 @@ export function loadState(): WorkflowState | null {
     return state;
   } catch (error) {
     const err = error as Error;
-    throw new Error(`Failed to load workflow state: ${err.message}`);
+    throw new Error(`Failed to load workflow state: ${err.message}`, { cause: error });
   }
 }
 
@@ -82,7 +82,7 @@ export function saveState(state: WorkflowState): void {
     }
 
     const err = error as Error;
-    throw new Error(`Failed to save workflow state: ${err.message}`);
+    throw new Error(`Failed to save workflow state: ${err.message}`, { cause: error });
   }
 }
 

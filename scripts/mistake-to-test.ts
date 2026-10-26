@@ -197,7 +197,7 @@ function main(): void {
 
   console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   console.log('✅ Regression test generation complete');
-  console.log(`   Run: npm test -- --testPathPattern=regression`);
+  console.log(`   Run: npm test -- --testPathPatterns=regression`);
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 }
 

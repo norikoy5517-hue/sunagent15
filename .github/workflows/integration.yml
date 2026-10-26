@@ -60,13 +60,13 @@ jobs:
         run: npm ci
 
       - name: Run agent integration tests
-        run: npm test -- --selectProjects integration --testPathPattern="agents.integration"
+        run: npm test -- --selectProjects integration --testPathPatterns="agents.integration"
 
       - name: Run skill integration tests
-        run: npm test -- --selectProjects integration --testPathPattern="skills.integration"
+        run: npm test -- --selectProjects integration --testPathPatterns="skills.integration"
 
       - name: Run MCP integration tests
-        run: npm test -- --selectProjects integration --testPathPattern="mcp.integration"
+        run: npm test -- --selectProjects integration --testPathPatterns="mcp.integration"
 
   multi-agent-tests:
     name: Multi-Agent Coordination Tests
@@ -97,7 +97,7 @@ jobs:
           ls .claude/agents/*multi-agent*.md 2>/dev/null | wc -l | xargs echo "Found multi-agent modes:"
 
       - name: Run multi-agent tests
-        run: npm test -- --selectProjects integration --testPathPattern="Multi-Agent" --passWithNoTests
+        run: npm test -- --selectProjects integration --testPathPatterns="Multi-Agent" --passWithNoTests
 
   skill-chain-tests:
     name: Skill Chain Tests
@@ -125,7 +125,7 @@ jobs:
           done
 
       - name: Run skill chain tests
-        run: npm test -- --selectProjects integration --testPathPattern="Skill Chaining" --passWithNoTests
+        run: npm test -- --selectProjects integration --testPathPatterns="Skill Chaining" --passWithNoTests
 
   test-report:
     name: Generate Test Report

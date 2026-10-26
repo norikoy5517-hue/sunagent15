@@ -913,7 +913,8 @@ export function rollbackToPhase(
           `未削除: ${remaining.join(', ')}\n` +
           `手動対応手順:\n` +
           `  1. 未削除ファイルを手動で削除する（rm <ファイル>）\n` +
-          `  2. もう一度ロールバックを実行する`
+          `  2. もう一度ロールバックを実行する`,
+        { cause: error }
       );
     }
   }

@@ -151,7 +151,7 @@ export function validateFile(filePath: string, options: { fixBom?: boolean } = {
       return result; // Skip directories
     }
 
-    let buffer = fs.readFileSync(filePath);
+    let buffer: Buffer = fs.readFileSync(filePath);
 
     // Check and optionally fix BOM
     if (hasBom(buffer)) {
