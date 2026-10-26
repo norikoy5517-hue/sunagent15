@@ -21,6 +21,9 @@ export class ExecutionHistory {
   private buffer: ExecutionRecord[] = [];
   private flushTimer: ReturnType<typeof setTimeout> | null = null;
   private initialized = false;
+  // Parsed file cache keyed by mtime+size: predict() reads history on every call, and
+  // re-parsing the whole JSONL (up to 1MB) each time made it O(file size) per prediction.
+  private fileCache: { mtimeMs: number; size: number; records: ExecutionRecord[] } | null = null;
 
   constructor(dataDir?: string) {
     const dir = dataDir || DEFAULT_DATA_DIR;
@@ -81,11 +84,15 @@ export class ExecutionHistory {
   loadAll(): ExecutionRecord[] {
     if (!fs.existsSync(this.filePath)) return [];
 
-    const content = fs.readFileSync(this.filePath, 'utf8').trim();
-    if (!content) return [];
+    // Re-parse only when the file changed (appends from any process change size/mtime)
+    const stat = fs.statSync(this.filePath);
+    if (this.fileCache && this.fileCache.mtimeMs === stat.mtimeMs && this.fileCache.size === stat.size) {
+      return this.fileCache.records.slice();
+    }
 
+    const content = fs.readFileSync(this.filePath, 'utf8').trim();
     const records: ExecutionRecord[] = [];
-    for (const line of content.split('\n')) {
+    for (const line of content ? content.split('\n') : []) {
       if (!line.trim()) continue;
       try {
         records.push(JSON.parse(line) as ExecutionRecord);
@@ -93,7 +100,8 @@ export class ExecutionHistory {
         // 破損行はスキップ
       }
     }
-    return records;
+    this.fileCache = { mtimeMs: stat.mtimeMs, size: stat.size, records };
+    return records.slice();
   }
 
   loadRecent(count: number): ExecutionRecord[] {

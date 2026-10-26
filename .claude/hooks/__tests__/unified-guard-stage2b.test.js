@@ -100,6 +100,35 @@ describe('ExecutionHistory', () => {
     expect(recent.length).toBe(5);
   });
 
+  test('2b. loadAll() のキャッシュは別インスタンス（別プロセス相当）の追記を反映する', () => {
+    const writer = new ExecutionHistory(tmpDir);
+    const reader = new ExecutionHistory(tmpDir);
+    const makeRecord = (i) => ({
+      timestamp: Date.now() + i,
+      toolName: `Tool${i}`,
+      intent: 'TEST',
+      riskLevel: 'low',
+      wasBlocked: false,
+      wasApproved: true,
+      features: makeFeatureVector(),
+    });
+
+    for (let i = 0; i < 3; i++) writer.record(makeRecord(i));
+    writer.flush();
+    expect(reader.loadAll().length).toBe(3);
+
+    // 返り値の配列を変更してもキャッシュは汚れない
+    reader.loadAll().length = 0;
+    expect(reader.loadAll().length).toBe(3);
+
+    // 別インスタンスの追記後は読み直す
+    for (let i = 3; i < 5; i++) writer.record(makeRecord(i));
+    writer.flush();
+    const all = reader.loadAll();
+    expect(all.length).toBe(5);
+    expect(all[4].toolName).toBe('Tool4');
+  });
+
   test('3. ログローテーション: 1MB超過でファイルが回転する', () => {
     const history = new ExecutionHistory(tmpDir);
     const bigRecord = {
