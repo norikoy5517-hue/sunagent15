@@ -171,11 +171,11 @@ jobs:
         run: npm ci
 
       - name: Run tests with coverage
-        run: npx jest --coverage --ci --runInBand --forceExit
+        run: npx jest --coverage --ci --runInBand
         timeout-minutes: 10
 
       - name: Run hook tests
-        run: npx jest --testMatch='**/.claude/hooks/__tests__/**/*.test.js' --ci --forceExit
+        run: npx jest --testMatch='**/.claude/hooks/__tests__/**/*.test.js' --ci
         timeout-minutes: 5
         continue-on-error: true
 
@@ -488,7 +488,7 @@ jobs:
         run: npm ci
 
       - name: Run baseline generator unit tests
-        run: npx jest --selectProjects scripts --ci --forceExit
+        run: npx jest --selectProjects scripts --ci
         timeout-minutes: 5
 
       - name: '--validate-manifest --expected-count 48 (manifest-only structural validate)'
