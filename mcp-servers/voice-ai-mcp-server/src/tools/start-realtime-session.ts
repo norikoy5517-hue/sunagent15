@@ -7,7 +7,7 @@ import type { OpenAIRealtimeClient } from "../clients/openai-realtime-client.js"
 const realtimeToolSchema = z.object({
   name: z.string().describe("Tool function name"),
   description: z.string().describe("Tool function description"),
-  parameters: z.record(z.unknown()).describe("JSON Schema for tool parameters"),
+  parameters: z.record(z.string(), z.unknown()).describe("JSON Schema for tool parameters"),
 });
 
 export default class StartRealtimeSessionTool extends AbstractTool {
