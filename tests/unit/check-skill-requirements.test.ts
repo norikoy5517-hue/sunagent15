@@ -301,7 +301,7 @@ describe('check-skill-requirements validator (F8.2)', () => {
     it('every returned path ends with SKILL.md (uppercase, Phase 2 Cleanup)', () => {
       const files = listSkillFiles([], []);
       for (const f of files as Array<{ path: string }>) {
-        expect(f.path.endsWith('/SKILL.md')).toBe(true);
+        expect(path.basename(f.path)).toBe('SKILL.md');
       }
     });
   });

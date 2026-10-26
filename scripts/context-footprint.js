@@ -57,7 +57,8 @@ function estimateTokens(text) {
 function measureFile(filePath) {
   const text = fs.readFileSync(filePath, 'utf8');
   return {
-    path: path.relative(repoRoot, filePath),
+    // Report paths with '/' on every OS so output is identical on Windows and CI (Linux)
+    path: path.relative(repoRoot, filePath).split(path.sep).join('/'),
     bytes: Buffer.byteLength(text, 'utf8'),
     tokens: estimateTokens(text),
   };

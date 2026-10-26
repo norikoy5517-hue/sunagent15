@@ -87,8 +87,9 @@ module.exports = {
       transform: {
         '^.+\\.tsx?$': ['ts-jest', { tsconfig: 'tsconfig.json' }],
       },
-      // Run Phase 3 tests serially to avoid file system conflicts
-      maxWorkers: 1,
+      // Run Phase 3 tests serially to avoid file system conflicts: maxWorkers is not
+      // supported per project (Jest 30 warns, Jest 29 silently ignored it), so the
+      // test:workflow-phase3 script passes --runInBand instead.
       // Force serial execution of test files
       runner: 'jest-runner',
       // Note: Users should run with --runInBand for reliable results

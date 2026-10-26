@@ -26,7 +26,9 @@ import { MemoryService } from '../../src/memory/MemoryService';
 import { TaskRecord, TaskCategory } from '../../src/memory/types';
 
 const WORKER_PATH = path.join(__dirname, '..', 'fixtures', 'memory-worker.ts');
-const TS_NODE_BIN = path.join(__dirname, '..', '..', 'node_modules', '.bin', 'ts-node');
+// Run ts-node's JS entry with the current Node binary: node_modules/.bin/ts-node is a
+// shell shim that child_process.spawn cannot execute on Windows (ENOENT).
+const TS_NODE_BIN = path.join(__dirname, '..', '..', 'node_modules', 'ts-node', 'dist', 'bin.js');
 
 interface WorkerResult {
   pid: number;
@@ -43,7 +45,7 @@ interface WorkerResult {
  */
 function spawnWorker(args: string[]): Promise<WorkerResult> {
   return new Promise((resolve, reject) => {
-    const child = spawn(TS_NODE_BIN, [WORKER_PATH, ...args], {
+    const child = spawn(process.execPath, [TS_NODE_BIN, WORKER_PATH, ...args], {
       stdio: ['ignore', 'pipe', 'pipe'],
       env: { ...process.env, NODE_OPTIONS: '' },
     });
